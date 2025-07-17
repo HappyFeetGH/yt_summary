@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유튜브 영상 요약기</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>유튜브 영상 요약기</h1>
+        
+        <div class="input-section">
+            <input type="text" id="youtube-url" placeholder="유튜브 URL을 입력하세요...">
+            <textarea id="custom-prompt" placeholder="사용자 정의 프롬프트 (선택사항)">이 영상을 200자 이내로 요약해 주세요.</textarea>
+            <button id="summarize-btn">요약하기</button>
+        </div>
+        
+        <div class="status-section">
+            <div id="status" class="hidden">대기 중...</div>
+            <div id="loading" class="hidden">처리 중...</div>
+        </div>
+        
+        <div class="result-section">
+            <h2>요약 결과</h2>
+            <div id="result"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
