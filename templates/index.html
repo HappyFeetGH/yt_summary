@@ -12,7 +12,23 @@
         
         <div class="input-section">
             <input type="text" id="youtube-url" placeholder="유튜브 URL을 입력하세요...">
-            <textarea id="custom-prompt" placeholder="사용자 정의 프롬프트 (선택사항)">이 영상을 200자 이내로 요약해 주세요.</textarea>
+            
+            <!-- 언어 선택 드롭다운 -->
+            <label for="language">자막 언어 선택:</label>
+            <select id="language">
+                <option value="ko">한국어 (ko)</option>
+                <option value="en">영어 (en)</option>
+            </select>
+            
+            <!-- 요약 길이 선택 드롭다운 -->
+            <label for="summary-length">요약 길이 선택:</label>
+            <select id="summary-length">
+                <option value="100">100자 이내</option>
+                <option value="200">200자 이내</option>
+                <option value="500">500자 이내</option>
+                <option value="1000">1000자 이내</option>
+            </select>
+            
             <button id="summarize-btn">요약하기</button>
         </div>
         

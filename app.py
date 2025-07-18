@@ -40,35 +40,52 @@ def handle_summarize_video(data):
     from flask_socketio import emit
     
     youtube_url = data.get('url')
-    custom_prompt = data.get('prompt', '이 영상을 200자 이내로 요약해 주세요.')
+    
+    # 입력 검증 (기존 유지)
+    allowed_languages = ['ko', 'en']
+    language = data.get('language', 'ko')
+    if language not in allowed_languages:
+        language = 'ko'
+    
+    allowed_lengths = [100, 200, 500, 1000]
+    summary_length = data.get('summaryLength', 200)
+    if summary_length not in allowed_lengths:
+        summary_length = 200
     
     if not youtube_url:
         emit('error', '유튜브 URL이 제공되지 않았습니다.')
+        emit('done')  # GUI 복구
         return
     
     emit('thinking')
-    logging.info(f"영상 요약 요청: {youtube_url}")
+    logging.info(f"영상 요약 요청: {youtube_url} (언어: {language}, 길이: {summary_length})")
     
     try:
-        # 영상 처리
-        subtitle_text, keyframe_files = video_processor.process_video(youtube_url, emit)
+        # 영상 처리 (언어 전달)
+        logging.info("영상 처리 시작...")
+        subtitle_text, keyframe_files = video_processor.process_video(youtube_url, emit, language=language)
         
         if not subtitle_text and not keyframe_files:
-            emit('error', '자막 또는 키프레임 추출에 실패했습니다.')
+            logging.warning("자막과 키프레임 모두 추출 실패. 요약 불가능.")
+            emit('error', '자막 또는 키프레임 추출에 실패했습니다. 영상을 확인하세요.')
+            emit('done')  # GUI 복구
             return
         
+        logging.info(f"추출 성공: 자막 길이={len(subtitle_text)}, 키프레임 수={len(keyframe_files)}")
+        
         # Gemini로 요약
+        logging.info("Gemini 요약 시작...")
         summary = gemini_client.summarize_with_keyframes(
-            subtitle_text, keyframe_files, custom_prompt, emit
+            subtitle_text, keyframe_files, summary_length, emit
         )
         
         emit('final_response', summary)
         emit('done')
         
     except Exception as e:
-        logging.error(f"요약 처리 중 예외 발생: {e}")
+        logging.error(f"요약 처리 중 예외 발생: {str(e)}", exc_info=True)  # 상세 예외 로그
         emit('error', f'서버 오류가 발생했습니다: {str(e)}')
-        emit('done')
+        emit('done')  # GUI 복구
 
 if __name__ == '__main__':
     # 필요한 디렉토리 생성

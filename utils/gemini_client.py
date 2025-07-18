@@ -7,12 +7,12 @@ class GeminiClient:
     def __init__(self):
         self.config = Config()
     
-    def summarize_with_keyframes(self, subtitle_text, keyframe_files, custom_prompt, emit_callback):
-        """Gemini를 사용해 영상 요약"""
+    def summarize_with_keyframes(self, subtitle_text, keyframe_files, summary_length, emit_callback):
+        """Gemini를 사용해 영상 요약 (서버 측 프롬프트 생성)"""
         emit_callback('status', 'AI 분석 중...')
         
-        # 프롬프트 구성
-        full_prompt = custom_prompt
+        # 서버 측 고정 프롬프트 템플릿 (보안 위해 클라이언트 입력 사용 안 함)
+        full_prompt = f"이 자막과 키프레임 이미지를 바탕으로 {summary_length}자 이내로 요약해 주세요."
         
         if subtitle_text:
             full_prompt += f"\n\n자막 내용:\n{subtitle_text}"

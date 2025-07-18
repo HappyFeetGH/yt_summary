@@ -1,6 +1,7 @@
 const socket = io();
 const urlInput = document.getElementById('youtube-url');
-const promptInput = document.getElementById('custom-prompt');
+const languageSelect = document.getElementById('language');
+const lengthSelect = document.getElementById('summary-length');
 const summarizeBtn = document.getElementById('summarize-btn');
 const statusDiv = document.getElementById('status');
 const loadingDiv = document.getElementById('loading');
@@ -9,7 +10,8 @@ const resultDiv = document.getElementById('result');
 // 요약 버튼 클릭 이벤트
 summarizeBtn.addEventListener('click', () => {
     const url = urlInput.value.trim();
-    const prompt = promptInput.value.trim();
+    const language = languageSelect.value;
+    const summaryLength = parseInt(lengthSelect.value, 10);
     
     if (!url) {
         alert('유튜브 URL을 입력하세요.');
@@ -22,11 +24,11 @@ summarizeBtn.addEventListener('click', () => {
     statusDiv.classList.add('hidden');
     loadingDiv.classList.remove('hidden');
     
-    // 서버에 요약 요청
-    socket.emit('summarize_video', { url, prompt });
+    // 서버에 요약 요청 (언어와 길이만 전송)
+    socket.emit('summarize_video', { url, language, summaryLength });
 });
 
-// 서버 이벤트 리스너
+// 서버 이벤트 리스너 (기존 유지)
 socket.on('thinking', () => {
     loadingDiv.textContent = 'AI가 분석 중입니다...';
     loadingDiv.classList.remove('hidden');
@@ -51,6 +53,7 @@ socket.on('error', (error) => {
     statusDiv.classList.add('error');
     statusDiv.classList.remove('hidden');
     loadingDiv.classList.add('hidden');
+    summarizeBtn.disabled = false;  // 버튼 재활성화
 });
 
 socket.on('done', () => {

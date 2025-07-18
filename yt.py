@@ -1,6 +1,6 @@
 import yt_dlp
 
-url = "https://youtu.be/TTEAEe9OUxA?si=eQYzwiYn9B4fi-In"
+url = "https://youtu.be/brkqur0KdgI?si=2cb4X9QQ2iqNh9l8"
 subtitle_filename = "temp_subtitles"  # 지정할 파일 이름 (임시용)
 
 ydl_opts = {
